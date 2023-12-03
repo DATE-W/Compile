@@ -1,3 +1,6 @@
+from src.parser.LR1Table.Token import token_dict
+
+
 class Grammar:
     def __init__(self, grammar_str):
         self.grammar = {}
@@ -8,8 +11,8 @@ class Grammar:
 
         for s in self.grammar_str_list:
             head, _, bodies = s.partition(' -> ')
-            if not head.isupper():
-                raise ValueError(f'\'{head} -> {bodies}\': Head \'{head}\' is not capitalized to be treated as a nonterminal.')
+            # if not head.isupper():
+            #     raise ValueError(f'\'{head} -> {bodies}\': Head \'{head}\' is not capitalized to be treated as a nonterminal.')
             if not self.start_symbol:
                 self.start_symbol = head
             self.grammar.setdefault(head, [])
@@ -21,9 +24,11 @@ class Grammar:
                     raise ValueError(f'\'{head} -> {" ".join(body)}\': Null symbol \'^\' is not allowed here.')
                 self.grammar[head].append(body)
                 for symbol in body:
-                    if not symbol.isupper() and symbol != '^':
+                    # if not symbol.isupper() and symbol != '^':
+                    if token_dict[symbol] and symbol != '^':
                         self.terminals.add(symbol)
-                    elif symbol.isupper():
+                    # elif symbol.isupper():
+                    elif not token_dict[symbol]:
                         self.nonterminals.add(symbol)
         self.symbols = self.terminals | self.nonterminals
 
