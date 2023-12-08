@@ -77,7 +77,7 @@ def first_follow(gra: Grammar):
     first = {symbol: set() for symbol in gra.symbols}
     first.update((terminal, {terminal}) for terminal in gra.terminals)  # first terminal 加入
     follow = {symbol: set() for symbol in gra.nonterminals}
-    follow[gra.start_symbol].add('.')
+    follow[gra.start_symbol].add('#')
     while True:
         updated = False
         for head, bodies in gra.grammar.items():
@@ -125,12 +125,14 @@ class LR1Table:
         print()
         print('Follow:')
         print(self.follow)
+        print()
 
         # 构建项目集规范族
         self.Collection = self.LR1_items(self.gra_prime)
+        print("Collection: ", self.Collection)
 
         # 构建LR1分析表
-        self.action = sorted(list(self.gra_prime.terminals)) + ['.']
+        self.action = sorted(list(self.gra_prime.terminals)) + ['#']
         self.goto = sorted(list(self.gra_prime.nonterminals - {self.gra_prime.start_symbol}))
         self.parse_table_symbols = self.action + self.goto
         self.parse_table = self.LR1_construct_table()
@@ -215,7 +217,7 @@ class LR1Table:
 
     # 构建项目集规范族
     def LR1_items(self, gra_prime):
-        start_item = {(gra_prime.start_symbol, '.'): {('.', gra_prime.start_symbol[:-1])}}
+        start_item = {(gra_prime.start_symbol, '#'): {('.', gra_prime.start_symbol[:-1])}}
         C = [self.LR1_closure(start_item)]  # 求 I0 的闭包
         while True:
             flag_len = len(C)
@@ -267,7 +269,7 @@ class LR1Table:
 
                     # CASE 2 c: 接受条件，当点 '.' 在增广文法的开始符号的产生式末尾
                     else:
-                        parse_table[i]['.'] = 'acc'
+                        parse_table[i]['#'] = 'acc'
 
             # CASE 3: 处理非终结符的跳转
             for A in self.gra_prime.nonterminals:
