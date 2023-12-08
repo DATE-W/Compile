@@ -280,6 +280,13 @@ class LR1Table:
 
         return parse_table
 
+    def print_table(self):
+        for r in self.parse_table:
+            print(f'\n{r}: ', end="")
+            for c in self.parse_table[r]:
+                if self.parse_table[r][c]:
+                    print(f'\'{c}\':{self.parse_table[r][c]}', end=" ")
+
 
 if __name__ == '__main__':
     grammar_str = open('grammar4.pl0').read()
@@ -289,3 +296,4 @@ if __name__ == '__main__':
     print()
 
     table = LR1Table(grammar)
+    table.print_table()
