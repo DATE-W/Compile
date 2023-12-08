@@ -87,7 +87,7 @@ class Lexer:
                 # 处理无法匹配的字符
                 raise RuntimeError(
                     f'Unexpected character {self.code[pos]} at line {self.current_line} column {self.current_column}')
-        return self.tokens
+        return self.tokens 
 
 
 # 示例使用
