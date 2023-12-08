@@ -4,6 +4,7 @@ from src.parser.LR1Table.Token import token_dict
 class Grammar:
     def __init__(self, grammar_str):
         self.grammar = {}
+        self.grammar_str = grammar_str
         self.terminals = set()
         self.nonterminals = set()
         self.start_symbol = None  # S'
