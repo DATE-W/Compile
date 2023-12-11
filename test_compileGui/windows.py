@@ -11,65 +11,15 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QLabel, QMenuBar, QMenu, QStatusBar, QTextEdit, \
+from PyQt5.QtWidgets import QApplication, QLabel, QMenuBar, QMenu, QStatusBar, QTextEdit,\
     QHBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsPixmapItem, QGraphicsRectItem, QStyle, QDockWidget
 from PyQt5.QtGui import QFont, QColor, QIcon, QPixmap
 from qframelesswindow import FramelessMainWindow, FramelessDialog, StandardTitleBar
 from PyQt5.QtCore import Qt, QSize
 from code_editor import CodeEditor
-from new_file_window import NewFileWindow
-
-
-class CustomTitleBar(StandardTitleBar):
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        self.minBtn.setHoverColor(Qt.white)
-        self.minBtn.setHoverBackgroundColor(QColor(50, 50, 50))
-        self.maxBtn.setHoverColor(Qt.white)
-        self.maxBtn.setHoverBackgroundColor(QColor(50, 50, 50))
-        self.closeBtn.setHoverColor(Qt.white)
-        self.closeBtn.setHoverBackgroundColor(QColor(50, 50, 50))
-
-
-class MyGraphicsScene(QGraphicsScene):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        # 设置场景的背景颜色
-        self.setBackgroundBrush(QColor(60, 60, 60))
-
-
-
-class ImageView(QGraphicsView):
-    def __init__(self, path):
-        super().__init__()
-
-        scene = MyGraphicsScene(self)
-
-        pixmap = QPixmap(path)
-        pixmap = pixmap.scaled(QSize(25, 25))
-        pixmap_item = QGraphicsPixmapItem(pixmap)
-        # 计算使 pixmap_item 居中的坐标值
-        center_x = (scene.width() - pixmap.width()) / 2
-        center_y = (scene.height() - pixmap.height()) / 2
-
-        # 设置 pixmap_item 在场景中的位置
-        pixmap_item.setPos(center_x, center_y)
-        # scene.addWidget(pixmap_item, Qt.AlignCenter)
-        scene.addItem(pixmap_item)
-
-
-        self.setStyleSheet(f"""
-                QGraphicsScene{{background-color:QColor(60, 60, 60);}}
-                QGraphicsView{{border:solid rgba(0, 0, 0, 0);}}
-            """)
-        # scene.setSceneRect(pixmap_item.pixmap().rect())
-
-        # 设置 QGraphicsView 的场景
-        self.setScene(scene)
-
+# from new_file_window import NewFileWindow
+from tools import MyTitleBar, MyGraphicsScene, ImageView, BasicColor
+from my_dockwidget import MyDockWidget
 
 class Ui_MainWindow(FramelessMainWindow):
 
@@ -83,10 +33,10 @@ class Ui_MainWindow(FramelessMainWindow):
         self.setWindowTitle("新建文件")
 
         # add menu bar
-        self.setTitleBar(CustomTitleBar(self))
+        self.setTitleBar(MyTitleBar(self))
         # self.setWindowIcon(QIcon('pic/vscode.png'))
         self.menuBar = QMenuBar(self.titleBar)
-        self.pictureBox = ImageView('pic/vscode.png')
+        self.pictureBox = ImageView('pic/edocsv.png')
         self.pictureBox.setFixedWidth(35)
         menu = QMenu('文件', self)
         menu.addAction('新建')
@@ -117,7 +67,9 @@ class Ui_MainWindow(FramelessMainWindow):
         #         """)
 
         # set QDockWidget
-
+        dock = MyDockWidget('dock', self)
+        dock.setAllowedAreas(Qt.BottomDockWidgetArea)
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock)
 
         self.setStyleSheet(f"""
                 FramelessMainWindow{{background-color:{self.border_color.name()};}}
@@ -129,7 +81,7 @@ class Ui_MainWindow(FramelessMainWindow):
                 QStatusBar{{background-color:{self.bg_color.name()};bordr: none}}
                 QMainWindow::close-button{{background-color:{self.default_color.name()};}}
                 """)
-        self.codeEditor.setGeometry(100, 100, 300, 200)
+        self.codeEditor.setGeometry(100, 100, 500, 400)
         self.setGeometry(100, 100, 600, 600)
 
 

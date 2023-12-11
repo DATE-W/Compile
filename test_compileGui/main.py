@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
+
 from windows import Ui_MainWindow
 
 
