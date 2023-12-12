@@ -1,110 +1,6 @@
 from src.parser.LR1Table.Grammar import Grammar
 
 
-# def union(set_1, set_2):
-#     """将后者并入前者，若前者改变则返回True"""
-#     set_1_len = len(set_1)
-#     set_1 |= set_2
-#     return set_1_len != len(set_1)
-
-# def FIRST(Gra: Grammar):
-#     first_sets = defaultdict(set)
-#
-#     def first(symbol):
-#         if symbol in first_sets:  # 已经计算过
-#             return first_sets[symbol]
-#
-#         if symbol in Gra.terminals:  # 终结符
-#             first_sets[symbol] = {symbol}
-#             return {symbol}
-#
-#         first_set = set()
-#         for production in Gra.grammar[symbol]:
-#             print(production)
-#             if production == ('^'):  # 空
-#                 first_set.add('^')
-#             else:
-#                 for sym in production:
-#                     sym_first_set = first(sym)
-#                     first_set.update(sym_first_set - {'^'})
-#                     if '^' not in sym_first_set:  # 如果非终结符FIRST集有空字，则继续循环看下一个字符
-#                         break
-#                 else:
-#                     first_set.add('^')
-#         first_sets[symbol] = first_set
-#
-#         return first_set
-#
-#     for symbol in Gra.grammar:
-#         first(symbol)
-#
-#     return dict(first_sets)
-#
-# def FOLLOW(Gra: Grammar):
-#     first_sets = FIRST(Gra)
-#     follow_sets = defaultdict(set)
-#     follow_sets[Gra.start_symbol].add('#')
-#
-#     while True:
-#         updated = False
-#         for head, bodies in Gra.grammar.items():
-#             for body in bodies:
-#                 follow = set(follow_sets[head])
-#                 for symbol in reversed(body):
-#                     if symbol in Gra.nonterminals:  # 非终结符
-#                         previous_follow = follow_sets[symbol].copy()  # 记录原有的FOLLOW集
-#                         follow_sets[symbol].update(follow - {'^'})  # 更新
-#                         if '^' in first_sets[symbol]:  # 最后的非终结符推出空，往前继续
-#                             follow = follow.union(first_sets[symbol]) - {'^'}  # 从后往前每一个可能为空的非终结符
-#                         else:
-#                             follow = first_sets[symbol]
-#                         if previous_follow != follow_sets[symbol]:
-#                             updated = True
-#                     else:  # 终结符直接加入FOLLOW
-#                         follow = {symbol}
-#
-#         if not updated:
-#             break  # 没有更新说明FOLLOW已求出
-#
-#     return dict(follow_sets)
-
-def first_follow(gra: Grammar):
-    def union(set_1, set_2):
-        set_1_len = len(set_1)
-        set_1 |= set_2
-        return set_1_len != len(set_1)
-
-    first = {symbol: set() for symbol in gra.symbols}
-    first.update((terminal, {terminal}) for terminal in gra.terminals)  # first terminal 加入
-    follow = {symbol: set() for symbol in gra.nonterminals}
-    follow[gra.start_symbol].add('#')
-    while True:
-        updated = False
-        for head, bodies in gra.grammar.items():
-            for body in bodies:
-                for symbol in body:
-                    if symbol != '^':
-                        updated |= union(first[head], first[symbol] - set('^'))
-                        if '^' not in first[symbol]:
-                            break
-                    else:
-                        updated |= union(first[head], set('^'))
-                else:
-                    updated |= union(first[head], set('^'))
-                aux = follow[head]
-                for symbol in reversed(body):
-                    if symbol == '^':
-                        continue
-                    if symbol in follow:
-                        updated |= union(follow[symbol], aux - set('^'))
-                    if '^' in first[symbol]:
-                        aux = aux | first[symbol]
-                    else:
-                        aux = first[symbol]
-        if not updated:
-            return first, follow
-
-
 class LR1Table:
     def __init__(self, gra: Grammar):
         # 扩展文法
@@ -119,25 +15,58 @@ class LR1Table:
                 self.gra_indexed.append([head, body])
 
         # 求 first follow 集合
-        self.first, self.follow = first_follow(self.gra_prime)
-        print('First:')
-        print(self.first)
-        print()
-        print('Follow:')
-        print(self.follow)
-        print()
+        self.first, self.follow = self.get_first_and_follow(self.gra_prime)
+        # self.print_first_and_follow()
 
         # 构建项目集规范族
         self.Collection = self.LR1_items(self.gra_prime)
-        print("Collection: ", self.Collection)
+        # self.print_collections()
 
         # 构建LR1分析表
         self.action = sorted(list(self.gra_prime.terminals)) + ['#']
         self.goto = sorted(list(self.gra_prime.nonterminals - {self.gra_prime.start_symbol}))
         self.parse_table_symbols = self.action + self.goto
         self.parse_table = self.LR1_construct_table()
+        # self.print_table()
+
+    def get_first_and_follow(self, gra: Grammar):
+        def union(set_1, set_2):
+            set_1_len = len(set_1)
+            set_1 |= set_2
+            return set_1_len != len(set_1)
+
+        first = {symbol: set() for symbol in gra.symbols}
+        first.update((terminal, {terminal}) for terminal in gra.terminals)  # first terminal 加入
+        follow = {symbol: set() for symbol in gra.nonterminals}
+        follow[gra.start_symbol].add('#')
+        while True:
+            updated = False
+            for head, bodies in gra.grammar.items():
+                for body in bodies:
+                    for symbol in body:
+                        if symbol != '^':
+                            updated |= union(first[head], first[symbol] - set('^'))
+                            if '^' not in first[symbol]:
+                                break
+                        else:
+                            updated |= union(first[head], set('^'))
+                    else:
+                        updated |= union(first[head], set('^'))
+                    aux = follow[head]
+                    for symbol in reversed(body):
+                        if symbol == '^':
+                            continue
+                        if symbol in follow:
+                            updated |= union(follow[symbol], aux - set('^'))
+                        if '^' in first[symbol]:
+                            aux = aux | first[symbol]
+                        else:
+                            aux = first[symbol]
+            if not updated:
+                return first, follow
 
     def construct_follow(self, s: tuple, extra: str) -> set:
+        """求LR1向前搜索符"""
         ret = set()
         flag = True
         for x in s:
@@ -280,6 +209,22 @@ class LR1Table:
 
         return parse_table
 
+    def print_first_and_follow(self):
+        print("First:")
+        for i in self.first:
+            print(f'\'{i}\': {self.first[i]}')
+        print("\nFollow:")
+        for i in self.follow:
+            print(f'\'{i}\': {self.follow[i]}')
+
+    def print_collections(self):
+        """打印项目集规范族"""
+        print("\nCollections:")
+        for i in range(len(self.Collection)):  # Ii
+            print(f'I{i}:')
+            for j in self.Collection[i]:
+                print(f'{j}: {self.Collection[i][j]}')
+
     def print_table(self):
         for r in self.parse_table:
             print(f'\n{r}: ', end="")
@@ -289,11 +234,14 @@ class LR1Table:
 
 
 if __name__ == '__main__':
-    grammar_str = open('grammar4.pl0').read()
+    grammar_str = open('grammars/grammar4.pl0').read()
     #
     grammar = Grammar(grammar_str)
     print(grammar)
     print()
 
     table = LR1Table(grammar)
+
+    table.print_first_and_follow()
+    table.print_collections()
     table.print_table()

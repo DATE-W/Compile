@@ -38,5 +38,5 @@ class Grammar:
 
 
 if __name__ == '__main__':
-    grammar_str = open('grammar4.pl0').read()
+    grammar_str = open('grammars/grammar4.pl0').read()
     print(Grammar(grammar_str))

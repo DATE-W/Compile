@@ -9,7 +9,6 @@ token_dict = {
     'VARIABLE_STATEMENT': False,
     'VARIABLE_': False,
     'ID': False,
-    'PROCEDURE': False,
     'COMP_STATEMENT': False,
     'COMP_BEGIN': False,
     'STATEMENT': False,
