@@ -1,4 +1,5 @@
 from src.parser.LR1Table.Grammar import Grammar
+from src.parser.LR1Table.Token import token_list
 
 
 class LR1Table:
@@ -13,6 +14,8 @@ class LR1Table:
         for head, bodies in self.gra_prime.grammar.items():
             for body in bodies:
                 self.gra_indexed.append([head, body])
+        # for i in self.gra_indexed:
+        #     print(i)
 
         # 求 first follow 集合
         self.first, self.follow = self.get_first_and_follow(self.gra_prime)
@@ -144,8 +147,8 @@ class LR1Table:
 
         return goto
 
-    # 构建项目集规范族
     def LR1_items(self, gra_prime):
+        """构建项目集规范族"""
         start_item = {(gra_prime.start_symbol, '#'): {('.', gra_prime.start_symbol[:-1])}}
         C = [self.LR1_closure(start_item)]  # 求 I0 的闭包
         while True:
@@ -158,8 +161,8 @@ class LR1Table:
             if flag_len == len(C):  # 如果没有产生新的式子，则表示已经构建完毕
                 return C
 
-    # 构建解析表
     def LR1_construct_table(self):
+        """构建LR1分析表"""
         # 初始化解析表，表格中的每个条目都为空字符串
         parse_table = {r: {c: '' for c in self.parse_table_symbols} for r in range(len(self.Collection))}
         # 遍历每个项集合每个产生式
@@ -232,6 +235,55 @@ class LR1Table:
                 if self.parse_table[r][c]:
                     print(f'\'{c}\':{self.parse_table[r][c]}', end=" ")
 
+    def get_reduce_list(self, tokens: list):
+        """输入token串，输出归约产生式列表"""
+        tokens.append('#')  # 输入串最后加上一个#
+        print('\n\nLR1 Analysis:')
+        results = []
+
+        state_stack = [0,]  # 状态栈
+        symbol_stack = []  # 符号栈
+
+        index = 0  # 目前处理的token的index
+        while True:
+            token = tokens[index]
+            next_action: str = self.parse_table[state_stack[-1]][token]
+            print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
+            if next_action == 'acc':
+                print('Complete!')
+                break
+
+            elif next_action.startswith('s'):  # 移进
+                state_stack.append(int(next_action.replace('s', '')))
+                symbol_stack.append(token)
+                index += 1
+
+            elif next_action.startswith('r'):  # 归约
+                production = self.gra_indexed[int(next_action.replace('r', ''))]
+                print(f'production: {production}')
+                results.append(production)  # 使用第n条产生式进行归约
+                for i in production[-1]:  # 移除栈顶i项，i=len(body)
+                    if i != '^':
+                        symbol_stack.pop()
+                        state_stack.pop()
+                state_stack.append(int(self.parse_table[state_stack[-1]][production[0]]))
+                symbol_stack.append(production[0])
+
+            elif next_action.isalnum():  # GOTO，已在归约中处理过
+                pass
+            else:
+                print('Error!')
+                break
+
+        # 打印所有归约产生式
+        print('\nReduce Results:', end='')
+        for i in results:
+            print(f'\n{i[0]} ->', end='')
+            for j in i[-1]:
+                print(f' {j}', end='')
+
+        return results
+
 
 if __name__ == '__main__':
     grammar_str = open('grammars/grammar4.pl0').read()
@@ -245,3 +297,5 @@ if __name__ == '__main__':
     table.print_first_and_follow()
     table.print_collections()
     table.print_table()
+
+    reduce_result = table.get_reduce_list(token_list)
