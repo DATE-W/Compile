@@ -1,5 +1,7 @@
-from src.parser.LR1Table.Grammar import Grammar
-from src.parser.LR1Table.Token import token_list
+import os
+
+from src.parser.Grammar import Grammar
+from src.parser.Token import *
 
 
 class LR1Table:
@@ -247,6 +249,9 @@ class LR1Table:
         index = 0  # 目前处理的token的index
         while True:
             token = tokens[index]
+            # token = tokens[index][0]
+            # var = tokens[index][1]
+
             next_action: str = self.parse_table[state_stack[-1]][token]
             print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
             if next_action == 'acc':
@@ -299,3 +304,4 @@ if __name__ == '__main__':
     table.print_table()
 
     reduce_result = table.get_reduce_list(token_list)
+    # reduce_result = table.get_reduce_list(token_list_1)

@@ -11,6 +11,8 @@ token_dict = {
     'VARIABLE_': False,
     'ID': False,
     'COMP_STATEMENT': False,
+    # 'COMP_BODY': False,
+    # 'COMP_BODY_': False,
     'COMP_BEGIN': False,
     'STATEMENT': False,
     'ASSIGN_STATEMENT': False,
@@ -131,5 +133,43 @@ token_list = [
     'id',
     ':=',
     'num',
-    ';'
+    # ';'
+]
+
+'''
+example:
+
+PROGRAM example
+    VAR x, y;
+    BEGIN
+        x := 2;
+        IF x > 3 THEN
+            y := x + 5
+    END
+'''
+token_list_1 = [
+    ('PROGRAM', ''),
+    ('id', 'example'),
+    ('VAR', ''),
+    ('id', 'x'),
+    (',', ''),
+    ('id', 'y'),
+    (';', ''),
+    ('BEGIN', ''),
+    ('id', 'x'),
+    (':=', ''),
+    ('num', '2'),
+    (';', ''),
+    ('IF', ''),
+    ('id', 'x'),
+    ('>', ''),
+    ('num', '3'),
+    ('THEN', ''),
+    ('id', 'y'),
+    (':=', ''),
+    ('id', 'x'),
+    ('+', ''),
+    ('num', '5'),
+    # (';', ''),
+    ('END', '')
 ]

@@ -1,4 +1,4 @@
-from src.parser.LR1Table.Token import token_dict
+from src.parser.Token import token_dict
 
 
 class Grammar:
