@@ -1,4 +1,4 @@
-"""是否是非终结符"""
+"""是否是终结符"""
 token_dict = {
     'PROG': False,
     'HEADER': False,
@@ -66,9 +66,9 @@ action: s3
 id, 03, #PROGRAM
 action: s9
 VAR, 039, #PROGRAM id
-action: r14(ID -> id)
+action: r14 (ID -> id)
 VAR, 038, #PROGRAM ID
-action: r2
+action: r2 (HEADER -> PROGRAM ID)
 VAR, 01, #HEADER
 action: r5 (CONST_STATEMENT -> ^)
 VAR, 016, #HEADER CONST_STATEMENT
