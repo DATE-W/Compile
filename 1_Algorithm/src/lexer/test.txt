@@ -3,5 +3,5 @@ PROGRAM example;
     BEGIN
         x := 2;
         IF x > 3 THEN
-            y := x + 5;
-        END;
+            y := x + 5
+    END

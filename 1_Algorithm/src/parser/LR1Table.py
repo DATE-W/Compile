@@ -1,5 +1,4 @@
-import os
-
+from src.lexer import *
 from src.parser.Grammar import Grammar
 from src.parser.Token import *
 
@@ -246,13 +245,17 @@ class LR1Table:
         state_stack = [0,]  # 状态栈
         symbol_stack = []  # 符号栈
 
+        var_list = []  # 产生式中的值(如id=x，num=1)
+        for i in tokens:
+            if i[-1] != '':
+                var_list.append(i[-1])
+
         index = 0  # 目前处理的token的index
         while True:
-            token = tokens[index]
-            # token = tokens[index][0]
-            # var = tokens[index][1]
+            # token = tokens[index]
+            token = tokens[index][0]
 
-            next_action: str = self.parse_table[state_stack[-1]][token]
+            next_action = self.parse_table[state_stack[-1]][token]
             print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
             if next_action == 'acc':
                 print('Complete!')
@@ -266,7 +269,11 @@ class LR1Table:
             elif next_action.startswith('r'):  # 归约
                 production = self.gra_indexed[int(next_action.replace('r', ''))]
                 print(f'production: {production}')
-                results.append(production)  # 使用第n条产生式进行归约
+                # results.append(production)  # 使用第n条产生式进行归约
+                if production[0] == 'ID' or production[0] == 'UINT':
+                    results.append((production, f'{var_list.pop(0)}'))
+                else:
+                    results.append((production, f''))
                 for i in production[-1]:  # 移除栈顶i项，i=len(body)
                     if i != '^':
                         symbol_stack.pop()
@@ -280,14 +287,26 @@ class LR1Table:
                 print('Error!')
                 break
 
-        # 打印所有归约产生式
-        print('\nReduce Results:', end='')
-        for i in results:
-            print(f'\n{i[0]} ->', end='')
-            for j in i[-1]:
-                print(f' {j}', end='')
+        # # 打印所有归约产生式
+        # print('\nReduce Results:', end='')
+        # for i in results:
+        #     print(f'\n{i[0]} ->', end='')
+        #     for j in i[-1]:
+        #         print(f' {j}', end='')
 
-        return results
+        formatted_results = []
+        for i in results:
+            str = f'{i[0][0]} ->'
+            for j in i[0][-1]:
+                str += f' {j}'
+            formatted_results.append((str, f'{i[-1]}'))
+
+        print('\nResult:')
+        for i in formatted_results:
+            print(f'\'{i[0]}\', \'{i[1]}\'')
+
+        # return results
+        return formatted_results
 
 
 if __name__ == '__main__':
@@ -303,5 +322,6 @@ if __name__ == '__main__':
     table.print_collections()
     table.print_table()
 
-    reduce_result = table.get_reduce_list(token_list)
+    # reduce_result = table.get_reduce_list(token_list)
     # reduce_result = table.get_reduce_list(token_list_1)
+    reduce_result = table.get_reduce_list(Lexer('../lexer/test2.txt').tokenize())

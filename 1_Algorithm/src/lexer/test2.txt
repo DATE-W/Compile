@@ -1,5 +1,5 @@
 PROGRAM test
-CONST VAR a=1,b=2;
+CONST a=1,b=2;
 VAR x,y;
 BEGIN
     x:=1;
