@@ -2,8 +2,8 @@ import re
 from collections import namedtuple
 
 # 定义 Token 数据结构，包含类型、值、行号和列号
-Token = namedtuple('Token', ['type', 'keyword', 'value', 'line', 'column'])
-
+# Token = namedtuple('Token', ['type', 'keyword', 'value', 'line', 'column'])
+Token = namedtuple('Token', ['type', 'value'])
 
 class Lexer:
     @staticmethod
@@ -32,8 +32,8 @@ class Lexer:
             'DO': r'DO',  # 执行关键字
             'IF': r'IF',  # 条件判断关键字
             'THEN': r'THEN',  # 条件成立时执行关键字
-            'NUMBER': r'\d+',  # 整数
-            'ID': r'[A-Za-z][A-Za-z0-9]*',  # 标识符
+            'num': r'\d+',  # 整数
+            'id': r'[a-z][a-z0-9]*',  # 标识符
             'ASSIGN': r':=',  # 赋值运算符
             'NE': r'<>',  # 不等于运算符
             'LE': r'<=',  # 小于等于运算符
@@ -46,8 +46,8 @@ class Lexer:
             'SUB': r'\-',    # 减法运算符
             'MUL': r'\*',    # 乘法运算符
             'DIV': r'/',    # 除法运算符
-            'LPAREN': r'\(',  # 左括号
-            'RPAREN': r'\)',  # 右括号
+            'LBRACKET': r'\(',  # 左括号
+            'RBRACKET': r'\)',  # 右括号
             'SEMICOLON': r';',  # 分号
             'COMMA': r',',  # 逗号
             'NEWLINE': r'\n',  # 新行
@@ -64,11 +64,17 @@ class Lexer:
             self.current_column = 1
         elif token_type != 'SKIP':
             # 生成并添加 token
+            # value = match.group(token_type)
+            # keyword = self.token_specification[token_type] if token_type not in ['ID', 'NUMBER'] else ('id' if token_type == 'ID' else 'num')
+            # if token_type in ['ADD', 'SUB', 'MUL', 'DIV']:
+            #     keyword = value
+            # token = Token(token_type, keyword, value, self.current_line, self.current_column)
+            # self.tokens.append(token)
             value = match.group(token_type)
-            keyword = self.token_specification[token_type] if token_type not in ['ID', 'NUMBER'] else ('id' if token_type == 'ID' else 'num')
-            if token_type in ['ADD', 'SUB', 'MUL', 'DIV']:
-                keyword = value
-            token = Token(token_type, keyword, value, self.current_line, self.current_column)
+            if token_type not in ['id', 'num']:
+                token_type = value
+                value = ''
+            token = Token(token_type, value)
             self.tokens.append(token)
         self.current_column += match.end() - match.start()
 
@@ -92,7 +98,7 @@ class Lexer:
 
 # 示例使用
 if __name__ == "__main__":
-    path = './test.txt'
+    path = './test2.txt'
     # code = '''
     # PROGRAM example;
     # VAR x, y;
@@ -104,5 +110,8 @@ if __name__ == "__main__":
     # '''
     lexer = Lexer(path)
     tokens = lexer.tokenize()
+    with open('./token2.txt', 'w') as file:
+        for token in tokens:
+            file.write('\'{a}\', \'{b}\'\n'.format(a=token.type, b=token.value))
     for token in tokens:
         print(token)
