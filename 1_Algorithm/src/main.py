@@ -1,5 +1,4 @@
 import os
-
 from src.codegen.Codegen import Codegen
 from src.lexer import Lexer
 from src.parser.Grammar import Grammar
@@ -17,7 +16,7 @@ for file_path in files:
                        get_reduce_result(Lexer(file_path).tokenize())))
     try:
         codegen.process()
-        print(f'\nCode: {codegen}')
+        print(f'\nCode:\n{codegen}')
         out_path = f'{out_folder_path}/{os.path.basename(file_path).split(".")[0]}-out.txt'
         print(f'Result has been saved to {out_path}.')
         with open(out_path, 'w') as file:
