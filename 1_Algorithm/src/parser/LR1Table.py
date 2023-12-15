@@ -242,10 +242,11 @@ class LR1Table:
         for i in self.formatted_results:
             print(f'\'{i[0]}\', \'{i[1]}\'')
 
-    def get_reduce_result(self, tokens: list):
+    def get_reduce_result(self, tokens: list, do_print=False):
         """输入token串，输出归约产生式列表"""
         tokens.append('#')  # 输入串最后加上一个#
-        print('\n\nLR1 Analysis:')
+        if do_print:
+            print('\n\nLR1 Analysis:')
         results = []
 
         state_stack = [0,]  # 状态栈
@@ -262,9 +263,11 @@ class LR1Table:
             token = tokens[index][0]
 
             next_action = self.parse_table[state_stack[-1]][token]
-            print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
+            if do_print:
+                print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
             if next_action == 'acc':
-                print('Complete!')
+                if do_print:
+                    print('Complete!')
                 break
 
             elif next_action.startswith('s'):  # 移进
@@ -274,7 +277,8 @@ class LR1Table:
 
             elif next_action.startswith('r'):  # 归约
                 production = self.gra_indexed[int(next_action.replace('r', ''))]
-                print(f'production: {production}')
+                if do_print:
+                    print(f'production: {production}')
                 # results.append(production)  # 使用第n条产生式进行归约
                 if production[0] == 'ID' or production[0] == 'UINT':
                     results.append((production, f'{var_list.pop(0)}'))
