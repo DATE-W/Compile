@@ -27,8 +27,8 @@ class Codegen:
     def __init__(self, reduce_list):
         self.reduce_list = reduce_list
         self.code: dict[int: Codegen.Code] = {}  # 用dict便于回填
-        self.temp_counter = 0
-        self.line_counter = 100
+        self.temp_counter = 0  # 记录当前临时变量
+        self.line_counter = 100  # 当前行数
         self.stack = []
         self.var_dict = {}
         self.const_dict = {}
@@ -80,7 +80,7 @@ class Codegen:
 
             elif production == 'ASSIGN_STATEMENT -> ID := EXPR':
                 if len(self.stack) < 2:
-                    raise RuntimeError("Stack underflow in ASSIGN_STATEMENT")
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 value = self.stack.pop()
                 name = self.stack.pop()
                 self.update_var(name, value)
@@ -88,7 +88,7 @@ class Codegen:
 
             elif production == 'CONST_DEF -> ID = UINT':
                 if len(self.stack) < 2:
-                    raise RuntimeError("Stack underflow in CONST_DEF")
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 value = self.stack.pop()
                 name = self.stack.pop()
                 self.add_const(name, value)
@@ -96,11 +96,13 @@ class Codegen:
 
             elif production.startswith('VARIABLE_ ->'):
                 if len(self.stack) < 1:
-                    raise RuntimeError("Stack underflow in VARIABLE_")
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 name = self.stack.pop()
                 self.add_var(name)
 
             elif production == 'HEADER -> PROGRAM ID':
+                if len(self.stack) < 1:
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 self.stack.pop()
 
             elif production == 'COMP_STATEMENT -> COMP_BEGIN END' \
@@ -116,7 +118,7 @@ class Codegen:
             elif production == 'EXPR -> EXPR PLUS ITEM' \
                     or production == 'ITEM -> ITEM MUL FACTOR':
                 if len(self.stack) < 3:
-                    raise RuntimeError("Stack underflow in ITEM or EXPR")
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 right = self.stack.pop()
                 op = self.stack.pop()
                 left = self.stack.pop()
@@ -125,6 +127,8 @@ class Codegen:
                 self.emit(op, temp, left, right)
 
             elif production == 'EXPR -> PLUS ITEM':  # 正负号
+                if len(self.stack) < 2:
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 item = self.stack.pop()
                 op = self.stack.pop()
                 if op == '-':
@@ -135,6 +139,8 @@ class Codegen:
                     self.stack.append(item)
 
             elif production == 'CONDITION -> EXPR REL EXPR':
+                if len(self.stack) < 3:
+                    raise RuntimeError(f"Stack underflow in production \'{production}\'")
                 right = self.stack.pop()
                 op = self.stack.pop()
                 left = self.stack.pop()
