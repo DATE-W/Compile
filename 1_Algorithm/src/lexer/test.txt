@@ -1,4 +1,4 @@
-PROGRAM example;
+PROGRAM example
     VAR x, y;
     BEGIN
         x := 2;

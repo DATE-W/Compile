@@ -6,6 +6,7 @@ from src.parser.Token import *
 class LR1Table:
     def __init__(self, gra: Grammar):
         # 扩展文法
+        self.formatted_results = []
         self.gra_prime = Grammar(f"{gra.start_symbol}' -> {gra.start_symbol}\n{gra.grammar_str}")
         # 开始符号的长度 + 1
         self.max_gra_prime_len = len(max(self.gra_prime.grammar, key=len))
@@ -214,7 +215,7 @@ class LR1Table:
         return parse_table
 
     def print_first_and_follow(self):
-        print("First:")
+        print("\nFirst:")
         for i in self.first:
             print(f'\'{i}\': {self.first[i]}')
         print("\nFollow:")
@@ -236,7 +237,12 @@ class LR1Table:
                 if self.parse_table[r][c]:
                     print(f'\'{c}\':{self.parse_table[r][c]}', end=" ")
 
-    def get_reduce_list(self, tokens: list):
+    def print_reduce_result(self):
+        print('\nReduce result:')
+        for i in self.formatted_results:
+            print(f'\'{i[0]}\', \'{i[1]}\'')
+
+    def get_reduce_result(self, tokens: list):
         """输入token串，输出归约产生式列表"""
         tokens.append('#')  # 输入串最后加上一个#
         print('\n\nLR1 Analysis:')
@@ -294,27 +300,19 @@ class LR1Table:
         #     for j in i[-1]:
         #         print(f' {j}', end='')
 
-        formatted_results = []
         for i in results:
-            str = f'{i[0][0]} ->'
+            res = f'{i[0][0]} ->'
             for j in i[0][-1]:
-                str += f' {j}'
-            formatted_results.append((str, f'{i[-1]}'))
+                res += f' {j}'
+            self.formatted_results.append((res, f'{i[-1]}'))
 
-        print('\nResult:')
-        for i in formatted_results:
-            print(f'\'{i[0]}\', \'{i[1]}\',')
-
-        # return results
-        return formatted_results
+        return self.formatted_results
 
 
 if __name__ == '__main__':
-    grammar_str = open('grammars/grammar4.pl0').read()
-    #
+    grammar_str = open('grammars/grammar.pl0').read()
     grammar = Grammar(grammar_str)
     print(grammar)
-    print()
 
     table = LR1Table(grammar)
 
@@ -322,6 +320,5 @@ if __name__ == '__main__':
     table.print_collections()
     table.print_table()
 
-    # reduce_result = table.get_reduce_list(token_list)
-    # reduce_result = table.get_reduce_list(token_list_1)
-    reduce_result = table.get_reduce_list(Lexer('../lexer/test2.txt').tokenize())
+    reduce_result = table.get_reduce_result(Lexer('../in/test.txt').tokenize())
+    table.print_reduce_result()
