@@ -141,8 +141,11 @@ class Codegen:
                 self.code[self.if_stack.pop()].write_back(self.line_counter)  # 回填
 
             elif production == 'WHILE_STATEMENT -> WHILE M_BEFORE_WHILE CONDITION DO M_AFTER_WHILE STATEMENT':
-                self.emit('j', self.while_stack.pop())  # 先跳回循环判断
-                self.code[self.while_stack.pop()].write_back(self.line_counter)  # 再回填
+                write_back = self.while_stack.pop()
+                jump_back = self.while_stack.pop()
+
+                self.emit('j', jump_back)  # 先跳回循环判断
+                self.code[write_back].write_back(self.line_counter)  # 再回填
 
             elif production == 'M_IF -> ^':
                 self.if_stack.append(self.line_counter)  # 记录假出口所在行
@@ -165,7 +168,7 @@ class Codegen:
 
 if __name__ == '__main__':
     grammar = Grammar(open('../parser/grammars/grammar.pl0').read())
-    path = '../in/test.txt'
+    path = '../in/test.pl0'
     codegen = Codegen((LR1Table(grammar).
                        get_reduce_result(Lexer(path).tokenize())))
     try:

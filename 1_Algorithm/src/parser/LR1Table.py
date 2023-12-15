@@ -320,5 +320,5 @@ if __name__ == '__main__':
     table.print_collections()
     table.print_table()
 
-    reduce_result = table.get_reduce_result(Lexer('../in/test.txt').tokenize())
+    reduce_result = table.get_reduce_result(Lexer('../in/test.pl0').tokenize())
     table.print_reduce_result()

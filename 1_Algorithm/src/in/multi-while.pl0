@@ -1,0 +1,17 @@
+PROGRAM mw
+VAR x, y;
+BEGIN
+    x:=0;
+    y:=0;
+    WHILE x<10 DO
+        WHILE y<9 DO
+            WHILE x<8 DO
+                BEGIN
+                    WHILE y<7 DO
+                        BEGIN
+                            x:=y+1;
+                            y:=x+1
+                        END;
+                    x:=y
+                END;
+END
