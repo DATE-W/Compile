@@ -303,7 +303,7 @@ class LR1Table:
 
         print('\nResult:')
         for i in formatted_results:
-            print(f'\'{i[0]}\', \'{i[1]}\'')
+            print(f'\'{i[0]}\', \'{i[1]}\',')
 
         # return results
         return formatted_results
