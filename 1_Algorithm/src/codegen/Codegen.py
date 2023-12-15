@@ -48,7 +48,10 @@ class Codegen:
 
     def update_var(self, name: str, value: str):
         if name not in self.var_dict:
-            raise RuntimeError(f'NotFound var {name}')
+            if name in self.const_dict:
+                raise RuntimeError(f'Cannot assign const {name}')
+            else:
+                raise RuntimeError(f'NotFound var {name}')
         self.var_dict[name] = value
 
     def add_const(self, name: str, value: str):

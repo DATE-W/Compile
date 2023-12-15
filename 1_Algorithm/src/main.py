@@ -18,7 +18,9 @@ for file_path in files:
     try:
         codegen.process()
         print(f'\nCode: {codegen}')
-        with open(f'{out_folder_path}/{os.path.basename(file_path).split(".")[0]}-out.txt', 'w') as file:
+        out_path = f'{out_folder_path}/{os.path.basename(file_path).split(".")[0]}-out.txt'
+        print(f'Result has been saved to {out_path}.')
+        with open(out_path, 'w') as file:
             file.write(str(codegen))
     except RuntimeError as re:
         print(re)
