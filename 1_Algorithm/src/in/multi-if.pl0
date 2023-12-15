@@ -1,0 +1,5 @@
+PROGRAM mi
+CONST x=10;
+IF x>5 THEN
+    IF x>4 THEN
+        IF x>3 THEN
