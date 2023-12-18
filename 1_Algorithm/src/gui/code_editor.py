@@ -9,11 +9,11 @@ class CodeEditor(QPlainTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         color = BasicColor()
-        print(self.width())
-        print(self.height())
+        # print(self.width())
+        # print(self.height())
         self.line_number_widget = QWidget(self)
         self.code_editor_widget = QWidget(self)
-        print(self.line_number_widget.height())
+        # print(self.line_number_widget.height())
         v_layout = QVBoxLayout(self.line_number_widget)
         v_layout.setContentsMargins(0, 0, 0, 0)
         h_layout = QHBoxLayout(self.code_editor_widget)
@@ -119,13 +119,13 @@ class CodeEditor(QPlainTextEdit):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         cr = self.contentsRect()
-        print('resized!!')
+        # print('resized!!')
         digits = len(str(max(1, self.blockCount())))
-        print(cr.height())
+        # print(cr.height())
         self.code_editor_widget.setGeometry(10 + self.fontMetrics().width('1') * digits, cr.top(),
                                             cr.right()-cr.left() - 18, cr.height())
         self.line_number_widget.setGeometry(cr.left(), cr.top(), 10 + self.fontMetrics().width('1') * digits, 50000)
-        print(self.line_number_widget.height())
+        # print(self.line_number_widget.height())
 
     def setHighlighter(self):
         color = BasicColor()

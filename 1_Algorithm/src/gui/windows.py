@@ -15,7 +15,7 @@ from qframelesswindow import FramelessMainWindow, FramelessDialog
 
 from .code_editor import CodeEditor
 from .my_dockwidget import MyDockWidget
-# from new_file_window import NewFileWindow
+from .code_runner import code_runner
 from .tools import MyTitleBar, ImageView
 
 
@@ -40,7 +40,7 @@ class Ui_MainWindow(FramelessMainWindow):
         menu.addAction('新建')
         menu.addAction('打开')
         self.menuBar.addMenu(menu)
-        self.menuBar.addAction('运行')
+        self.menuBar.addAction('运行', self.run)
         self.menuBar.addAction('帮助', self.showHelpDialog)
         self.titleBar.layout().insertWidget(1, self.menuBar, 0, Qt.AlignLeft)
         self.titleBar.layout().insertWidget(0, self.pictureBox, 0, Qt.AlignCenter)
@@ -48,21 +48,8 @@ class Ui_MainWindow(FramelessMainWindow):
         self.titleBar.layout().insertStretch(1, 0)
         self.setMenuWidget(self.titleBar)
 
-        # # add status bar
-        # statusBar = QStatusBar(self)
-        # statusBar.addWidget(QLabel('row 1'))
-        # statusBar.addWidget(QLabel('column 1'))
-        # self.setStatusBar(statusBar)
-
-        # set central widget
         self.codeEditor = CodeEditor(self)
         self.setCentralWidget(self.codeEditor)
-        # self.setCentralWidget(self.codeEditor)
-        # self.setStyleSheet("""
-        #             QMenuBar{background: #F0F0F0; padding: 5px 0}
-        #             QTextEdit{border: none; font-size: 15px}
-        #             QDialog > QLabel{font-size: 15px}
-        #         """)
 
         # set QDockWidget
         dock = MyDockWidget('dock', self)
@@ -98,5 +85,9 @@ class Ui_MainWindow(FramelessMainWindow):
         w.setResizeEnabled(False)
         w.exec()
 
+    def run(self):
+        content = self.codeEditor.code_editor.toPlainText()
+        print(content)
+        code_runner(content)
 
 

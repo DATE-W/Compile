@@ -15,8 +15,9 @@ class Lexer:
         return ret
 
     # 需要参数为文件路径
-    def __init__(self, filepath):
-        self.code = self.get_code(filepath)  # 源代码字符串
+    def __init__(self, code):
+        # self.code = self.get_code(filepath)  # 源代码字符串
+        self.code = code
         self.tokens = []  # 存储生成的 tokens
         self.current_line = 1  # 当前行号
         self.current_column = 1  # 当前列号
