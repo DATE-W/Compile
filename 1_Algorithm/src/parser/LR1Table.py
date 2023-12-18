@@ -1,5 +1,4 @@
-import os
-
+from src.lexer import *
 from src.parser.Grammar import Grammar
 from src.parser.Token import *
 
@@ -7,6 +6,7 @@ from src.parser.Token import *
 class LR1Table:
     def __init__(self, gra: Grammar):
         # 扩展文法
+        self.formatted_results = []
         self.gra_prime = Grammar(f"{gra.start_symbol}' -> {gra.start_symbol}\n{gra.grammar_str}")
         # 开始符号的长度 + 1
         self.max_gra_prime_len = len(max(self.gra_prime.grammar, key=len))
@@ -215,7 +215,7 @@ class LR1Table:
         return parse_table
 
     def print_first_and_follow(self):
-        print("First:")
+        print("\nFirst:")
         for i in self.first:
             print(f'\'{i}\': {self.first[i]}')
         print("\nFollow:")
@@ -237,25 +237,37 @@ class LR1Table:
                 if self.parse_table[r][c]:
                     print(f'\'{c}\':{self.parse_table[r][c]}', end=" ")
 
-    def get_reduce_list(self, tokens: list):
+    def print_reduce_result(self):
+        print('\nReduce result:')
+        for i in self.formatted_results:
+            print(f'\'{i[0]}\', \'{i[1]}\'')
+
+    def get_reduce_result(self, tokens: list, do_print=False):
         """输入token串，输出归约产生式列表"""
         tokens.append('#')  # 输入串最后加上一个#
-        print('\n\nLR1 Analysis:')
+        if do_print:
+            print('\n\nLR1 Analysis:')
         results = []
 
         state_stack = [0,]  # 状态栈
         symbol_stack = []  # 符号栈
 
+        var_list = []  # 产生式中的值(如id=x，num=1)
+        for i in tokens:
+            if i[-1] != '':
+                var_list.append(i[-1])
+
         index = 0  # 目前处理的token的index
         while True:
-            token = tokens[index]
-            # token = tokens[index][0]
-            # var = tokens[index][1]
+            # token = tokens[index]
+            token = tokens[index][0]
 
-            next_action: str = self.parse_table[state_stack[-1]][token]
-            print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
+            next_action = self.parse_table[state_stack[-1]][token]
+            if do_print:
+                print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
             if next_action == 'acc':
-                print('Complete!')
+                if do_print:
+                    print('Complete!')
                 break
 
             elif next_action.startswith('s'):  # 移进
@@ -265,8 +277,13 @@ class LR1Table:
 
             elif next_action.startswith('r'):  # 归约
                 production = self.gra_indexed[int(next_action.replace('r', ''))]
-                print(f'production: {production}')
-                results.append(production)  # 使用第n条产生式进行归约
+                if do_print:
+                    print(f'production: {production}')
+                # results.append(production)  # 使用第n条产生式进行归约
+                if production[0] == 'ID' or production[0] == 'UINT':
+                    results.append((production, f'{var_list.pop(0)}'))
+                else:
+                    results.append((production, f''))
                 for i in production[-1]:  # 移除栈顶i项，i=len(body)
                     if i != '^':
                         symbol_stack.pop()
@@ -280,22 +297,26 @@ class LR1Table:
                 print('Error!')
                 break
 
-        # 打印所有归约产生式
-        print('\nReduce Results:', end='')
-        for i in results:
-            print(f'\n{i[0]} ->', end='')
-            for j in i[-1]:
-                print(f' {j}', end='')
+        # # 打印所有归约产生式
+        # print('\nReduce Results:', end='')
+        # for i in results:
+        #     print(f'\n{i[0]} ->', end='')
+        #     for j in i[-1]:
+        #         print(f' {j}', end='')
 
-        return results
+        for i in results:
+            res = f'{i[0][0]} ->'
+            for j in i[0][-1]:
+                res += f' {j}'
+            self.formatted_results.append((res, f'{i[-1]}'))
+
+        return self.formatted_results
 
 
 if __name__ == '__main__':
-    grammar_str = open('grammars/grammar4.pl0').read()
-    #
+    grammar_str = open('grammars/grammar.pl0').read()
     grammar = Grammar(grammar_str)
     print(grammar)
-    print()
 
     table = LR1Table(grammar)
 
@@ -303,5 +324,5 @@ if __name__ == '__main__':
     table.print_collections()
     table.print_table()
 
-    reduce_result = table.get_reduce_list(token_list)
-    # reduce_result = table.get_reduce_list(token_list_1)
+    reduce_result = table.get_reduce_result(Lexer('../in/test.pl0').tokenize())
+    table.print_reduce_result()

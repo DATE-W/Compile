@@ -1,7 +1,6 @@
 'PROGRAM', ''
 'id', 'test'
 'CONST', ''
-'VAR', ''
 'id', 'a'
 '=', ''
 'num', '1'
