@@ -1,9 +1,36 @@
 from qframelesswindow import FramelessMainWindow, FramelessDialog, StandardTitleBar
-from PyQt5.QtGui import QFont, QColor, QIcon, QPixmap
+from PyQt5.QtGui import QFont, QColor, QIcon, QPixmap, QSyntaxHighlighter, QTextCharFormat, QTextFormat
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QGraphicsView, QGraphicsScene, \
-    QGraphicsPixmapItem, QStyle, QDockWidget, QWidget, QPushButton
+    QGraphicsPixmapItem, QStyle, QDockWidget, QWidget, QPushButton, QPlainTextEdit
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import QRegExp
 import sys
+
+
+class CodeEditorHighlighter(QSyntaxHighlighter):
+    def __init__(self, parent=None):
+        super(CodeEditorHighlighter, self).__init__(parent)
+        self.highlightingRules = []
+
+        color = BasicColor()
+        code_element_format = QTextCharFormat()
+        code_element_format.setForeground(color.procedure_color)
+
+    def set_highlighting_rules(self, dict):
+        for key, value in dict.items():
+            code_element_format = QTextCharFormat()
+            code_element_format.setForeground(value)
+            self.highlightingRules.append((QRegExp(key), code_element_format))
+
+    def highlightBlock(self, text):
+        for pattern, format in self.highlightingRules:
+            expression = QRegExp(pattern)
+            index = expression.indexIn(text)
+            while index >= 0:
+                length = expression.matchedLength()
+                self.setFormat(index, length, format)
+                index = expression.indexIn(text, index + length)
+
 
 
 class ImagePushButton(QWidget):

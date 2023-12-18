@@ -71,9 +71,12 @@ class Lexer:
             # token = Token(token_type, keyword, value, self.current_line, self.current_column)
             # self.tokens.append(token)
             value = match.group(token_type)
+            if token_type == 'END':
+                print('1\n')
             if token_type not in ['id', 'num']:
                 token_type = value
                 value = ''
+
             token = Token(token_type, value)
             self.tokens.append(token)
         self.current_column += match.end() - match.start()
@@ -113,5 +116,5 @@ if __name__ == "__main__":
     with open('./token2.txt', 'w') as file:
         for token in tokens:
             file.write('\'{a}\', \'{b}\'\n'.format(a=token.type, b=token.value))
-    for token in tokens:
-        print(token)
+    # for token in tokens:
+    # print(token)
