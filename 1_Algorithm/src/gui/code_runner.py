@@ -27,7 +27,25 @@ def code_runner(code: str):
     grammar_path = './grammar/grammar.pl0'
     out_folder_path = './out'
 
-    codegen = Codegen((LR1Table(Grammar(open(grammar_path).read())).get_reduce_result(Lexer(code).tokenize())))
+    # 1. 打开并读取文法文件
+    grammar_file_content = open(grammar_path).read()
+
+    # 2. 创建一个 Grammar 对象
+    grammar = Grammar(grammar_file_content)
+
+    # 3. 创建一个 LR1Table 对象
+    lr1_table = LR1Table(grammar)
+
+    # 4. 创建一个 Lexer 对象并对代码进行词法分析
+    lexer = Lexer(code)
+    tokens = lexer.tokenize()
+
+    # 5. 获取归约结果
+    reduce_results = lr1_table.get_reduce_result(tokens)
+
+    # 6. 创建 Codegen 对象
+    codegen = Codegen(reduce_results)
+
     try:
         codegen.process()
         print(f'\nCode:\n{codegen}')
@@ -37,3 +55,5 @@ def code_runner(code: str):
             file.write(str(codegen))
     except RuntimeError as re:
         print(re)
+
+    return lr1_table.get_parse_table(), str(codegen)

@@ -303,7 +303,7 @@ class LR1Table:
         #     print(f'\n{i[0]} ->', end='')
         #     for j in i[-1]:
         #         print(f' {j}', end='')
-
+        print(self.parse_table[0])
         for i in results:
             res = f'{i[0][0]} ->'
             for j in i[0][-1]:
@@ -312,11 +312,13 @@ class LR1Table:
 
         return self.formatted_results
 
+    def get_parse_table(self):
+        return self.parse_table
 
 if __name__ == '__main__':
     grammar_str = open('grammars/grammar.pl0').read()
     grammar = Grammar(grammar_str)
-    print(grammar)
+    # print(grammar)
 
     table = LR1Table(grammar)
 

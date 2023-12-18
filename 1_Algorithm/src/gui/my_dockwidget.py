@@ -24,26 +24,14 @@ class MyDockWidget(QDockWidget):
         table_button.setChecked(True)
         table_button.toggled.connect(self.show_table)
         mcode_button.toggled.connect(self.show_mcode)
-        # minimize_button = ImagePushButton('pic/icon_minimize.png', 15, self)
-        # minimize_button.setMinimumHeight(25)
 
-        #
-        # my_title_bar.h_layout.addWidget(output_button, Qt.AlignCenter)
         my_title_bar.h_layout.addWidget(table_button, Qt.AlignCenter)
         my_title_bar.h_layout.addWidget(mcode_button, Qt.AlignCenter)
-        # my_title_bar.h_layout.addWidget(minimize_button, Qt.AlignAbsolute)
-        # minimize_button.clicked.connect(super().showMinimized)
 
         color = BasicColor()
         self.setStyleSheet(f"""
             QRadioButton{{color:{color.default_color.name()};}}
         """)
-        #
-        #
-        # button_group = QButtonGroup(self)
-        # button_group.addButton(self.output_button)
-        # button_group.addButton(self.table_button)
-        # button_group.addButton(self.mcode_button)
     def show_table(self):
         self.setWidget(self.table)
 

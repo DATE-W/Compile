@@ -10,7 +10,7 @@
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QLabel, QMenuBar, QMenu, QHBoxLayout
+from PyQt5.QtWidgets import QLabel, QMenuBar, QMenu, QHBoxLayout, QTableWidgetItem
 from qframelesswindow import FramelessMainWindow, FramelessDialog
 
 from .code_editor import CodeEditor
@@ -52,9 +52,9 @@ class Ui_MainWindow(FramelessMainWindow):
         self.setCentralWidget(self.codeEditor)
 
         # set QDockWidget
-        dock = MyDockWidget('dock', self)
-        dock.setAllowedAreas(Qt.BottomDockWidgetArea)
-        self.addDockWidget(Qt.BottomDockWidgetArea, dock)
+        self.dock = MyDockWidget('dock', self)
+        self.dock.setAllowedAreas(Qt.BottomDockWidgetArea)
+        self.addDockWidget(Qt.BottomDockWidgetArea, self.dock)
 
         self.setStyleSheet(f"""
                 FramelessMainWindow{{background-color:{self.border_color.name()};}}
@@ -88,7 +88,41 @@ class Ui_MainWindow(FramelessMainWindow):
 
     def run(self):
         content = self.codeEditor.code_editor.toPlainText()
-        print(content)
-        code_runner(content)
+        table, output = code_runner(content)
+
+        # 找到主窗口中的 MyDockWidget 实例
+        # dock_widget = self.findChild(MyDockWidget, 'dock')  # 'dock' 是您在创建时设置的对象名称
+        # print(table)
+        print(output)
+        # 如果找到了 MyDockWidget 实例
+        if self.dock:
+            # 调用一个函数来填充 MyDockWidget 中的 QTableWidget
+            self.fill_table_with_dict_list(self.dock.table, table)
+            self.fill_mcode_with_codegen(self.dock.mcode, output)
+
+    def fill_table_with_dict_list(self, table_widget, dict_list):
+        # 确保有数据
+        if not dict_list:
+            return
+
+        # 获取所有键作为表头
+        headers = list(dict_list[0].keys())
+        # print(headers)
+        table_widget.setColumnCount(len(headers))
+        table_widget.setRowCount(len(dict_list))
+        table_widget.setHorizontalHeaderLabels(headers)
+
+        # 填充数据
+        for row_index, row_dict in enumerate(dict_list):
+            for col_index, header in enumerate(headers):
+                # 这里不知道为什么row_dict都是0，1，2这种索引
+                item_value = dict_list[row_index].get(header, '')
+                table_widget.setItem(row_index, col_index, QTableWidgetItem(item_value))
+
+        # 调整列宽以适应内容
+        table_widget.resizeColumnsToContents()
+
+    def fill_mcode_with_codegen(self, mcode_widget, codegen):
+        mcode_widget.setText(codegen)
 
 
