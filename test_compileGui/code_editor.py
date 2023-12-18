@@ -22,6 +22,7 @@ import sys
 
 
 class CodeEditor(QPlainTextEdit):
+
     def __init__(self, parent=None):
         super().__init__(parent)
         color = BasicColor()
@@ -146,15 +147,15 @@ class CodeEditor(QPlainTextEdit):
     def setHighlighter(self):
         color = BasicColor()
         highlight_dict = {
-            'PROGRAM': color.program_color,  # 程序开始关键字
-            'BEGIN': color.procedure_color,  # 开始关键字
-            'END': color.procedure_color,  # 结束关键字
-            'CONST': color.keyword_color,  # 常量声明关键字
-            'VAR': color.keyword_color,  # 变量声明关键字
-            'WHILE': color.keyword_color,  # 循环关键字
-            'DO': color.keyword_color,  # 执行关键字
-            'IF': color.keyword_color,  # 条件判断关键字
-            'THEN': color.keyword_color,  # 条件成立时执行关键字
+            r'\bPROGRAM\b': color.program_color,  # 程序开始关键字
+            r'\bBEGIN\b': color.procedure_color,  # 开始关键字
+            r'\bEND\b': color.procedure_color,  # 结束关键字
+            r'\bCONST\b': color.keyword_color,  # 常量声明关键字
+            r'\bVAR\b': color.keyword_color,  # 变量声明关键字
+            r'\bWHILE\b': color.keyword_color,  # 循环关键字
+            r'\bDO\b': color.keyword_color,  # 执行关键字
+            r'\bIF\b': color.keyword_color,  # 条件判断关键字
+            r'\bTHEN\b': color.keyword_color,  # 条件成立时执行关键字
             # 'num': r'\d+',  # 整数
             # 'id': r'[a-z][a-z0-9]*',  # 标识符
             # 'ASSIGN': r':=',  # 赋值运算符
