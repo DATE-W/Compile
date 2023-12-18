@@ -1,9 +1,13 @@
 import os
+import sys
+
+from PyQt5.QtWidgets import QApplication
+
 from src.codegen.Codegen import Codegen
+from src.gui.windows import Ui_MainWindow
 from src.lexer import Lexer
 from src.parser.Grammar import Grammar
 from src.parser.LR1Table import LR1Table
-
 
 grammar_path = './grammar/grammar.pl0'
 in_folder_path = './in'
@@ -23,3 +27,11 @@ for file_path in files:
             file.write(str(codegen))
     except RuntimeError as re:
         print(re)
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+
+    main_window = Ui_MainWindow()
+    main_window.show()
+
+    sys.exit(app.exec_())
