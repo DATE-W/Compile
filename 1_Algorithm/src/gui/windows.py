@@ -65,6 +65,7 @@ class Ui_MainWindow(FramelessMainWindow):
                 QTextEdit{{background-color:{self.bg_color.name()};border: none; font-size: 15px}}
                 QStatusBar{{background-color:{self.bg_color.name()};bordr: none}}
                 QMainWindow::close-button{{background-color:{self.default_color.name()};}}
+                QTableWidget{{background-color:{self.bg_color.name()};border:None}}
                 """)
         self.codeEditor.setGeometry(100, 100, 500, 400)
         self.setGeometry(100, 100, 600, 600)
