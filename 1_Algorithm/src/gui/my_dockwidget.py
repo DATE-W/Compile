@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDockWidget, QRadioButton, QHBoxLayout, QTextEdit, QTableWidget, QWidget
 
-from .tools import MyTitleBarWidget, BasicColor
+from .tools import MyTitleBarWidget, BasicColor, MyScrollBar
 
 
 class MyDockWidget(QDockWidget):
@@ -10,13 +10,18 @@ class MyDockWidget(QDockWidget):
 
         my_title_bar = MyTitleBarWidget()
         self.table = QTableWidget()
+        self.table.setVerticalScrollBar(MyScrollBar())
+        self.table.setHorizontalScrollBar(MyScrollBar())
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.mcode = QTextEdit()
+        self.mcode.setVerticalScrollBar(MyScrollBar())
+        self.mcode.setHorizontalScrollBar(MyScrollBar())
         self.mcode.setReadOnly(True)
         self.setTitleBarWidget(my_title_bar)
         self.setWidget(self.table)
         # check_box = QCheckBox('check me', self)
         # my_title_bar.h_layout.addWidget(check_box, Qt.AlignCenter)
-        self.setFixedHeight(200)
+        self.setMinimumHeight(200)
 
         # output_button = QRadioButton('输出', self)
         table_button = QRadioButton('LR1分析表', self)
@@ -31,6 +36,7 @@ class MyDockWidget(QDockWidget):
         color = BasicColor()
         self.setStyleSheet(f"""
             QRadioButton{{color:{color.default_color.name()};}}
+            QTextEdit{{color:{color.default_color.name()}}}
         """)
     def show_table(self):
         self.setWidget(self.table)

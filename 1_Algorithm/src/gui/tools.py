@@ -2,8 +2,91 @@ from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QColor, QIcon, QPixmap, QSyntaxHighlighter, QTextCharFormat
 from PyQt5.QtWidgets import QHBoxLayout, QGraphicsView, QGraphicsScene, \
-    QGraphicsPixmapItem, QWidget, QPushButton
+    QGraphicsPixmapItem, QWidget, QPushButton, QScrollBar
 from qframelesswindow import StandardTitleBar
+
+
+class MyScrollBar(QScrollBar):
+    def __init__(self, parent=None):
+        super(MyScrollBar, self).__init__(parent)
+        self.setStyleSheet("""
+             QScrollBar:vertical {
+                  border-width: 0px;
+                  border: none;
+                  background:rgba(64, 65, 79, 0);
+                  width:12px;
+                  margin: 0px 0px 0px 0px;
+              }
+              QScrollBar::handle:vertical {
+                  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                  stop: 0 #40414f, stop: 0.5 #40414f, stop:1 #40414f);
+                  min-height: 20px;
+                  max-height: 20px;
+                  margin: 0 0px 0 0px;
+                  border-radius: 6px;
+              }
+              QScrollBar::add-line:vertical {
+                  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                  stop: 0 rgba(64, 65, 79, 0), stop: 0.5 rgba(64, 65, 79, 0),  stop:1 rgba(64, 65, 79, 0));
+                  height: 0px;
+                  border: none;
+                  subcontrol-position: bottom;
+                  subcontrol-origin: margin;
+              }
+              QScrollBar::sub-line:vertical {
+                  background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                  stop: 0  rgba(64, 65, 79, 0), stop: 0.5 rgba(64, 65, 79, 0),  stop:1 rgba(64, 65, 79, 0));
+                  height: 0 px;
+                  border: none;
+                  subcontrol-position: top;
+                  subcontrol-origin: margin;
+              }
+              QScrollBar::sub-page:vertical {
+              background: rgba(64, 65, 79, 0);
+              }
+
+              QScrollBar::add-page:vertical {
+              background: rgba(64, 65, 79, 0);
+              }
+              QScrollBar:horizontal {
+                  border-width: 0px;
+                  border: none;
+                  background:rgba(64, 65, 79, 0);
+                  width:12px;
+                  margin: 0px 0px 0px 0px;
+              }
+              QScrollBar::handle:horizontal {
+                  background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                  stop: 0 #40414f, stop: 0.5 #40414f, stop:1 #40414f);
+                  min-height: 20px;
+                  max-height: 20px;
+                  margin: 0 0px 0 0px;
+                  border-radius: 6px;
+              }
+              QScrollBar::add-line:horizontal {
+                  background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                  stop: 0 rgba(64, 65, 79, 0), stop: 0.5 rgba(64, 65, 79, 0),  stop:1 rgba(64, 65, 79, 0));
+                  height: 0px;
+                  border: none;
+                  subcontrol-position: bottom;
+                  subcontrol-origin: margin;
+              }
+              QScrollBar::sub-line:horizontal {
+                  background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                  stop: 0  rgba(64, 65, 79, 0), stop: 0.5 rgba(64, 65, 79, 0),  stop:1 rgba(64, 65, 79, 0));
+                  height: 0 px;
+                  border: none;
+                  subcontrol-position: top;
+                  subcontrol-origin: margin;
+              }
+              QScrollBar::sub-page:horizontal {
+              background: rgba(64, 65, 79, 0);
+              }
+
+              QScrollBar::add-page:horizontal {
+              background: rgba(64, 65, 79, 0);
+              }
+              """)
 
 
 class CodeEditorHighlighter(QSyntaxHighlighter):
