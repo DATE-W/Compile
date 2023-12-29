@@ -5,13 +5,24 @@ import java.util.Map;
 import java.util.Stack;
 
 public class PL0VisitorImpl extends PL0BaseVisitor<String> {
+    /**
+     * 内部类 Code，用于表示四元式代码。
+     */
     private class Code {
-        String op;
-        String arg1;
-        String arg2;
-        String result;
-        int line;
+        String op; // 操作符
+        String arg1; // 第一个参数
+        String arg2; // 第二个参数
+        String result; // 结果
+        int line; // 行号
 
+        /**
+         * 构造函数
+         * @param op 操作符
+         * @param arg1 第一个参数
+         * @param arg2 第二个参数
+         * @param result 结果
+         * @param line 行号
+         */
         public Code(String op, String arg1, String arg2, String result, int line) {
             this.op = op;
             this.arg1 = arg1;
@@ -26,24 +37,38 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
         }
     }
 
-    private int tempCounter = 0;        // 中间变量数量
-    private int lineCounter = 100;      // 总行数
-    private Stack<String> stack = new Stack<>();
-    private Map<String, String> varDict = new HashMap<>();
-    private Map<String, String> constDict = new HashMap<>();
-    private Stack<Integer> whileStack = new Stack<>();      // 记录循环开始的行和需要回填的行
-    private Stack<Integer> ifStack = new Stack<>();         // 记录需要回填的行
-    private Map<Integer, Code> code = new HashMap<>();
+    // 类成员变量定义
+    private int tempCounter = 0; // 用于生成临时变量的计数器
+    private int lineCounter = 100; // 当前代码的行号
+    private Stack<String> stack = new Stack<>(); // 用于表达式求值的栈
+    private Map<String, String> varDict = new HashMap<>(); // 变量字典
+    private Map<String, String> constDict = new HashMap<>(); // 常量字典
+    private Map<Integer, Code> code = new HashMap<>(); // 存储生成的代码
 
+    /**
+     * 生成四元式代码并将其添加到代码列表中。
+     * @param op 操作符
+     * @param arg1 第一个参数
+     * @param arg2 第二个参数
+     * @param result 结果
+     */
     private void emit(String op, String arg1, String arg2, String result) {
         code.put(lineCounter, new Code(op, arg1, arg2, result, lineCounter));
         lineCounter++;
     }
 
+    /**
+     * 生成新的临时变量。
+     * @return 生成的临时变量名称。
+     */
     private String newTemp() {
         return "t" + (tempCounter++);
     }
 
+    /**
+     * 获取生成的代码的字符串表示。
+     * @return 代码的字符串表示。
+     */
     public String getCodeString() {
         StringBuilder sb = new StringBuilder();
         for (Code c : code.values()) {
@@ -52,27 +77,41 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
         return sb.toString();
     }
 
+    /**
+     * 向变量字典中添加新变量。
+     * @param name 变量名称
+     */
     private void addVar(String name) {
         if (varDict.containsKey(name)) {
-            throw new RuntimeException("Redefinition in var " + name);
+            throw new RuntimeException("变量重定义：" + name);
         }
         varDict.put(name, "");
     }
 
+    /**
+     * 更新变量的值。
+     * @param name 变量名称
+     * @param value 变量的值
+     */
     private void updateVar(String name, String value) throws RuntimeException {
         if (!varDict.containsKey(name)) {
             if (constDict.containsKey(name)) {
-                throw new RuntimeException("Cannot assign const " + name);
+                throw new RuntimeException("无法给常量赋值：" + name);
             } else {
-                throw new RuntimeException("NotFound var " + name);
+                throw new RuntimeException("未找到变量：" + name);
             }
         }
         varDict.put(name, value);
     }
 
+    /**
+     * 向常量字典中添加新常量。
+     * @param name 常量名称
+     * @param value 常量的值
+     */
     private void addConst(String name, String value) throws RuntimeException {
         if (constDict.containsKey(name)) {
-            throw new RuntimeException("Redefinition in const " + name);
+            throw new RuntimeException("常量重定义：" + name);
         }
         constDict.put(name, value);
     }
