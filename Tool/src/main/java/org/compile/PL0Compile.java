@@ -1,7 +1,11 @@
 package org.compile;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.*;
-import org.compile.gen.PL0.*;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.compile.gen.PL0.PL0Lexer;
+import org.compile.gen.PL0.PL0Parser;
+import org.compile.gen.PL0.PL0VisitorImpl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
