@@ -1,0 +1,29 @@
+PROGRAM com1
+CONST x=10,y=20,z=30;
+VAR a,b,c,d,e;
+BEGIN
+    BEGIN
+        BEGIN
+            a:=1;
+            b:=2;
+            IF x>5 THEN
+                c:=3;
+            IF y>15 THEN
+                d:=4;
+            IF z>45 THEN
+                e:=5;
+            IF a<>b THEN
+                a:=b
+        END;
+        WHILE a<=x DO
+            a:=a+1
+    END;
+    BEGIN
+        WHILE b<=z DO
+            b:=b+c
+    END;
+    BEGIN
+        WHILE d<=y DO
+            b:=b+c
+    END
+END

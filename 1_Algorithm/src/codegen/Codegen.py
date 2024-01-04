@@ -112,7 +112,7 @@ class Codegen:
             elif production.startswith('REL ->') \
                     or production.startswith('MUL ->') \
                     or production.startswith('PLUS ->'):
-                op = production[-1]
+                op = production.split('-> ')[-1]
                 self.stack.append(op)
 
             elif production == 'EXPR -> EXPR PLUS ITEM' \
