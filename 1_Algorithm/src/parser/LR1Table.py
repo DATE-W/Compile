@@ -294,8 +294,10 @@ class LR1Table:
             elif next_action.isalnum():  # GOTO，已在归约中处理过
                 pass
             else:
-                print('Error!')
-                break
+                error_msg = f"Error in token= '{token}'"
+                if token == 'id' or token == 'num':
+                    error_msg += f', value = {var_list[0]}'
+                raise RuntimeError(error_msg)
 
         # # 打印所有归约产生式
         # print('\nReduce Results:', end='')

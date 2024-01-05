@@ -40,8 +40,11 @@ def code_runner(code: str):
     lexer = Lexer(code)
     tokens = lexer.tokenize()
 
-    # 5. 获取归约结果
-    reduce_results = lr1_table.get_reduce_result(tokens)
+    try:
+        # 5. 获取归约结果
+        reduce_results = lr1_table.get_reduce_result(tokens)
+    except RuntimeError as re:
+        return None, re
 
     # 6. 创建 Codegen 对象
     codegen = Codegen(reduce_results)

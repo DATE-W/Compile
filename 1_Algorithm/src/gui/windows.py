@@ -95,8 +95,9 @@ class Ui_MainWindow(FramelessMainWindow):
         # dock_widget = self.findChild(MyDockWidget, 'dock')  # 'dock' 是您在创建时设置的对象名称
         # print(table)
         print(output)
+
         # 如果找到了 MyDockWidget 实例
-        if self.dock:
+        if self.dock and table is not None:
             # 调用一个函数来填充 MyDockWidget 中的 QTableWidget
             self.fill_table_with_dict_list(self.dock.table, table)
             self.fill_mcode_with_codegen(self.dock.mcode, output)
