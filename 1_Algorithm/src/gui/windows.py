@@ -36,10 +36,10 @@ class Ui_MainWindow(FramelessMainWindow):
         self.menuBar = QMenuBar(self.titleBar)
         self.pictureBox = ImageView('pic/edocsv.png')
         self.pictureBox.setFixedWidth(35)
-        menu = QMenu('文件', self)
-        menu.addAction('新建')
-        menu.addAction('打开', self.open_file)
-        self.menuBar.addMenu(menu)
+        # menu = QMenu('打开', self)
+        # menu.addAction('新建')
+        # menu.addAction('打开', self.open_file)
+        self.menuBar.addAction("打开", self.open_file)
         self.menuBar.addAction('运行', self.run)
         self.menuBar.addAction('帮助', self.showHelpDialog)
         self.titleBar.layout().insertWidget(1, self.menuBar, 0, Qt.AlignLeft)
@@ -129,8 +129,13 @@ class Ui_MainWindow(FramelessMainWindow):
     def open_file(self):
         fileName, fileType = QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(),
                                                                    "All Files(*);;Text Files(*.txt)")
-        with open(fileName, "r") as f:
-            res = f.read()
-            self.codeEditor.code_editor.setPlainText(res)
-        print(fileName)
+        print(fileName + "x")
+        if fileName == "" or fileName is None:
+            # 没有选择文件，那么就跳过，避免意外打开空路径
+            pass
+        else:
+            with open(fileName, "r") as f:
+                res = f.read()
+                self.codeEditor.code_editor.setPlainText(res)
+            print(fileName)
 
