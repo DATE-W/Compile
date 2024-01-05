@@ -36,9 +36,12 @@ def code_runner(code: str):
     # 3. 创建一个 LR1Table 对象
     lr1_table = LR1Table(grammar)
 
-    # 4. 创建一个 Lexer 对象并对代码进行词法分析
-    lexer = Lexer(code)
-    tokens = lexer.tokenize()
+    try:
+        # 4. 创建一个 Lexer 对象并对代码进行词法分析
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
+    except RuntimeError as re:
+        return None, re
 
     try:
         # 5. 获取归约结果
