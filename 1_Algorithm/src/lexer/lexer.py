@@ -3,7 +3,7 @@ from collections import namedtuple
 
 # 定义 Token 数据结构，包含类型、值、行号和列号
 # Token = namedtuple('Token', ['type', 'keyword', 'value', 'line', 'column'])
-Token = namedtuple('Token', ['type', 'value'])
+Token = namedtuple('Token', ['type', 'value', 'line', 'column'])
 
 class Lexer:
     @staticmethod
@@ -62,7 +62,7 @@ class Lexer:
         if token_type == 'NEWLINE':
             # 更新行号和列号
             self.current_line += 1
-            self.current_column = 1
+            self.current_column = 0
         elif token_type != 'SKIP':
             # 生成并添加 token
             # value = match.group(token_type)
@@ -78,7 +78,7 @@ class Lexer:
                 token_type = value
                 value = ''
 
-            token = Token(token_type, value)
+            token = Token(token_type, value, self.current_line, self.current_column)
             self.tokens.append(token)
         self.current_column += match.end() - match.start()
 
@@ -97,7 +97,8 @@ class Lexer:
                 # 处理无法匹配的字符
                 raise RuntimeError(
                     f'Unexpected character {self.code[pos]} at line {self.current_line} column {self.current_column}')
-        return self.tokens 
+        print(self.tokens)
+        return self.tokens
 
 
 # 示例使用
