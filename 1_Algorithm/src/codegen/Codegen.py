@@ -42,7 +42,7 @@ class Codegen:
         return res
 
     def add_var(self, name: str):
-        if name in self.var_dict:
+        if name in self.var_dict or name in self.const_dict:
             raise RuntimeError(f'Redefinition in var {name}')
         self.var_dict[name] = ''
 
@@ -51,7 +51,7 @@ class Codegen:
             if name in self.const_dict:
                 raise RuntimeError(f'Cannot assign const {name}')
             else:
-                raise RuntimeError(f'NotFound var {name}')
+                raise RuntimeError(f'Undefined var {name}')
         self.var_dict[name] = value
 
     def add_const(self, name: str, value: str):
@@ -112,7 +112,7 @@ class Codegen:
             elif production.startswith('REL ->') \
                     or production.startswith('MUL ->') \
                     or production.startswith('PLUS ->'):
-                op = production[-1]
+                op = production.split('-> ')[-1]
                 self.stack.append(op)
 
             elif production == 'EXPR -> EXPR PLUS ITEM' \
@@ -178,8 +178,10 @@ class Codegen:
 if __name__ == '__main__':
     grammar = Grammar(open('../parser/grammars/grammar.pl0').read())
     path = '../in/test.pl0'
+    with open(path, "r") as f:
+        code = f.read()
     codegen = Codegen((LR1Table(grammar).
-                       get_reduce_result(Lexer(path).tokenize())))
+                       get_reduce_result(Lexer(code).tokenize())))
     try:
         codegen.process()
         print('\nCode: ')

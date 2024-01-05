@@ -36,17 +36,22 @@ def code_runner(code: str):
     # 3. 创建一个 LR1Table 对象
     lr1_table = LR1Table(grammar)
 
-    # 4. 创建一个 Lexer 对象并对代码进行词法分析
-    lexer = Lexer(code)
-    tokens = lexer.tokenize()
-
-    # 5. 获取归约结果
-    reduce_results = lr1_table.get_reduce_result(tokens)
-
-    # 6. 创建 Codegen 对象
-    codegen = Codegen(reduce_results)
+    try:
+        # 4. 创建一个 Lexer 对象并对代码进行词法分析
+        lexer = Lexer(code)
+        tokens = lexer.tokenize()
+    except RuntimeError as re:
+        return None, re
 
     try:
+        # 5. 获取归约结果
+        reduce_results = lr1_table.get_reduce_result(tokens)
+    except RuntimeError as re:
+        return None, re
+
+    try:
+        # 6. 创建 Codegen 对象
+        codegen = Codegen(reduce_results)
         codegen.process()
         print(f'\nCode:\n{codegen}')
         out_path = f'{out_folder_path}/output.txt'
@@ -54,6 +59,7 @@ def code_runner(code: str):
         with open(out_path, 'w') as file:
             file.write(str(codegen))
     except RuntimeError as re:
-        print(re)
+        # print(re)
+        return None, re
 
     return lr1_table.get_parse_table(), str(codegen)

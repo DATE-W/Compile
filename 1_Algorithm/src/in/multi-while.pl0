@@ -13,5 +13,5 @@ BEGIN
                             y:=x+1
                         END;
                     x:=y
-                END;
+                END
 END

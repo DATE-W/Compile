@@ -3,7 +3,7 @@ from collections import namedtuple
 
 # 定义 Token 数据结构，包含类型、值、行号和列号
 # Token = namedtuple('Token', ['type', 'keyword', 'value', 'line', 'column'])
-Token = namedtuple('Token', ['type', 'value'])
+Token = namedtuple('Token', ['type', 'value', 'line', 'column'])
 
 class Lexer:
     @staticmethod
@@ -53,6 +53,7 @@ class Lexer:
             'COMMA': r',',  # 逗号
             'NEWLINE': r'\n',  # 新行
             'SKIP': r'[ \t]+',  # 跳过空格和制表符
+            'ERROR': r'[A-Z]*',
             'MISMATCH': r'.',  # 任何其他字符
         }
 
@@ -62,7 +63,9 @@ class Lexer:
         if token_type == 'NEWLINE':
             # 更新行号和列号
             self.current_line += 1
-            self.current_column = 1
+            self.current_column = 0
+        elif token_type == 'ERROR':
+            raise RuntimeError(f"Unexpected character {self.code[match.end()]} at line {self.current_line} column {self.current_column}")
         elif token_type != 'SKIP':
             # 生成并添加 token
             # value = match.group(token_type)
@@ -78,7 +81,7 @@ class Lexer:
                 token_type = value
                 value = ''
 
-            token = Token(token_type, value)
+            token = Token(token_type, value, self.current_line, self.current_column)
             self.tokens.append(token)
         self.current_column += match.end() - match.start()
 
@@ -97,7 +100,9 @@ class Lexer:
                 # 处理无法匹配的字符
                 raise RuntimeError(
                     f'Unexpected character {self.code[pos]} at line {self.current_line} column {self.current_column}')
-        return self.tokens 
+        for t in self.tokens:
+            print(t)
+        return self.tokens
 
 
 # 示例使用
@@ -112,10 +117,10 @@ if __name__ == "__main__":
     #         y := x + 5;
     #     END;
     # '''
-    lexer = Lexer(path)
+    with open(path, "r") as f:
+        code = f.read()
+    lexer = Lexer(code)
     tokens = lexer.tokenize()
     with open('./token2.txt', 'w') as file:
         for token in tokens:
-            file.write('\'{a}\', \'{b}\'\n'.format(a=token.type, b=token.value))
-    # for token in tokens:
-    # print(token)
+            file.write('\'{a}\', \'{b}\', {c}, {d}\n'.format(a=token.type, b=token.value, c=token.line, d=token.column))

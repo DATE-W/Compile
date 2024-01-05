@@ -254,17 +254,16 @@ class LR1Table:
 
         var_list = []  # 产生式中的值(如id=x，num=1)
         for i in tokens:
-            if i[-1] != '':
-                var_list.append(i[-1])
+            if i != '#' and i[1] != '':
+                var_list.append((i[1],i[2],i[3]))
 
         index = 0  # 目前处理的token的index
         while True:
-            # token = tokens[index]
-            token = tokens[index][0]
+            token = tokens[index]
 
-            next_action = self.parse_table[state_stack[-1]][token]
+            next_action = self.parse_table[state_stack[-1]][token[0]]
             if do_print:
-                print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token}\'; action= {next_action}")
+                print(f"States: {state_stack}; Symbols: {symbol_stack}; Next token: \'{token[0]}\'; action= {next_action}")
             if next_action == 'acc':
                 if do_print:
                     print('Complete!')
@@ -281,9 +280,10 @@ class LR1Table:
                     print(f'production: {production}')
                 # results.append(production)  # 使用第n条产生式进行归约
                 if production[0] == 'ID' or production[0] == 'UINT':
-                    results.append((production, f'{var_list.pop(0)}'))
+                    var = var_list.pop(0)
+                    results.append((production, f'{var[0]}', var[1], var[2]))
                 else:
-                    results.append((production, f''))
+                    results.append((production, f'', None, None))
                 for i in production[-1]:  # 移除栈顶i项，i=len(body)
                     if i != '^':
                         symbol_stack.pop()
@@ -294,8 +294,12 @@ class LR1Table:
             elif next_action.isalnum():  # GOTO，已在归约中处理过
                 pass
             else:
-                print('Error!')
-                break
+                error_msg = f"Error in token='{token[0]}'"
+                if token[0] == 'id' or token[0] == 'num':
+                    error_msg += f', value={var_list[0][0]}, row={var_list[0][1]}, column={var_list[0][2]}'
+                else:
+                    error_msg += f', row={token[2]}, column={token[3]}'
+                raise RuntimeError(error_msg)
 
         # # 打印所有归约产生式
         # print('\nReduce Results:', end='')
@@ -308,12 +312,13 @@ class LR1Table:
             res = f'{i[0][0]} ->'
             for j in i[0][-1]:
                 res += f' {j}'
-            self.formatted_results.append((res, f'{i[-1]}'))
+            self.formatted_results.append((res, f'{i[1]}'))
 
         return self.formatted_results
 
     def get_parse_table(self):
         return self.parse_table
+
 
 if __name__ == '__main__':
     grammar_str = open('grammars/grammar.pl0').read()
@@ -326,5 +331,7 @@ if __name__ == '__main__':
     table.print_collections()
     table.print_table()
 
-    reduce_result = table.get_reduce_result(Lexer('../in/test.pl0').tokenize())
+    with open('../in/test.pl0', "r") as f:
+        code = f.read()
+    reduce_result = table.get_reduce_result(Lexer(code).tokenize())
     table.print_reduce_result()
