@@ -10,13 +10,13 @@
 import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QLabel, QMenuBar, QMenu, QHBoxLayout, QTableWidgetItem,QFileDialog
+from PyQt5.QtWidgets import QLabel, QMenuBar, QMenu, QHBoxLayout, QTableWidgetItem, QFileDialog, QMessageBox
 from qframelesswindow import FramelessMainWindow, FramelessDialog
 
 from .code_editor import CodeEditor
 from .my_dockwidget import MyDockWidget
 from .code_runner import code_runner
-from .tools import MyTitleBar, ImageView
+from .tools import MyTitleBar, ImageView, HelpPopup, ErrorPopup
 
 
 class Ui_MainWindow(FramelessMainWindow):
@@ -77,7 +77,9 @@ class Ui_MainWindow(FramelessMainWindow):
 
         # add a label to dialog
         w.setLayout(QHBoxLayout())
-        w.layout().addWidget(QLabel('Frameless Dialog'), 0, Qt.AlignCenter)
+        help_str = "欢迎使用PL/0编译器，你可以点击\"打开\"来选择输入的代码文件，也可以手动输入你的代码程序，而后点击运行即可开始运行，下方会生成对应的LR1分析表和中间代码的四元式形式。" \
+                   "\n注意：如果代码有错误，则会有弹窗提醒"
+        w.layout().addWidget(QLabel(help_str), 0, Qt.AlignCenter)
 
         # raise title bar
         w.titleBar.raise_()
@@ -88,8 +90,14 @@ class Ui_MainWindow(FramelessMainWindow):
         w.exec()
 
     def run(self):
+        # if(self.codeEditor.code_ediotr.toPlainText() == None or self.codeEditor.code_ediotr.toPlainText() == ""):
+        #     return
         content = self.codeEditor.code_editor.toPlainText()
+        if content is None or content == "":
+            return
         table, output = code_runner(content)
+        if table is None:
+            QMessageBox.warning(self, "Error", str(output))
 
         # 找到主窗口中的 MyDockWidget 实例
         # dock_widget = self.findChild(MyDockWidget, 'dock')  # 'dock' 是您在创建时设置的对象名称

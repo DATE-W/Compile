@@ -53,6 +53,7 @@ class Lexer:
             'COMMA': r',',  # 逗号
             'NEWLINE': r'\n',  # 新行
             'SKIP': r'[ \t]+',  # 跳过空格和制表符
+            'ERROR': r'[A-Z]*',
             'MISMATCH': r'.',  # 任何其他字符
         }
 
@@ -63,6 +64,8 @@ class Lexer:
             # 更新行号和列号
             self.current_line += 1
             self.current_column = 0
+        elif token_type == 'ERROR':
+            raise RuntimeError("the code has got syntax error")
         elif token_type != 'SKIP':
             # 生成并添加 token
             # value = match.group(token_type)

@@ -1,9 +1,9 @@
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QColor, QIcon, QPixmap, QSyntaxHighlighter, QTextCharFormat
-from PyQt5.QtWidgets import QHBoxLayout, QGraphicsView, QGraphicsScene, \
-    QGraphicsPixmapItem, QWidget, QPushButton, QScrollBar
-from qframelesswindow import StandardTitleBar
+from PyQt5.QtWidgets import QHBoxLayout, QGraphicsView, QGraphicsScene, QDesktopWidget, \
+    QGraphicsPixmapItem, QWidget, QPushButton, QScrollBar, QTextBrowser, QTextEdit, QLabel
+from qframelesswindow import StandardTitleBar, FramelessDialog
 
 
 class MyScrollBar(QScrollBar):
@@ -198,3 +198,36 @@ class ImageView(QGraphicsView):
 
         # 设置 QGraphicsView 的场景
         self.setScene(scene)
+
+
+class ErrorPopup(FramelessDialog):
+    def __init__(self, ex):
+        super().__init__()
+        self.setLayout(QHBoxLayout())
+        self.layout().addWidget(QLabel(str(ex)), 0, Qt.AlignCenter)
+        self.titleBar.raise_()
+        self.resize(200, 100)
+        self.setResizeEnabled(False)
+        # self.setStyleSheet(f"""
+        #     QWidget{{
+        #                 background-color:{BasicColor().bg_color};
+        #             }}
+        # """)
+
+    def center(self):
+        # 获取屏幕的坐标系
+        screen = QDesktopWidget().screenGeometry()
+
+        # 获取窗口的坐标系
+        size = self.geometry()
+
+        # 计算窗口居中的坐标
+        x = (screen.width() - size.width()) // 2
+        y = (screen.height() - size.height()) // 2
+
+        # 移动窗口到居中的位置
+        self.move(x, y)
+
+class HelpPopup(FramelessDialog):
+    def __init__(self):
+        super().__init__()
