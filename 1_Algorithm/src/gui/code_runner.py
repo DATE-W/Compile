@@ -46,10 +46,9 @@ def code_runner(code: str):
     except RuntimeError as re:
         return None, re
 
-    # 6. 创建 Codegen 对象
-    codegen = Codegen(reduce_results)
-
     try:
+        # 6. 创建 Codegen 对象
+        codegen = Codegen(reduce_results)
         codegen.process()
         print(f'\nCode:\n{codegen}')
         out_path = f'{out_folder_path}/output.txt'
@@ -57,6 +56,7 @@ def code_runner(code: str):
         with open(out_path, 'w') as file:
             file.write(str(codegen))
     except RuntimeError as re:
-        print(re)
+        # print(re)
+        return None, re
 
     return lr1_table.get_parse_table(), str(codegen)

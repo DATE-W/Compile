@@ -7,4 +7,4 @@ BEGIN
         x:=x-(-3);
     WHILE y>=-10 DO
         y:=y+(-2)
-END;
+END

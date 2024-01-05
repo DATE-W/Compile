@@ -97,7 +97,8 @@ class Lexer:
                 # 处理无法匹配的字符
                 raise RuntimeError(
                     f'Unexpected character {self.code[pos]} at line {self.current_line} column {self.current_column}')
-        print(self.tokens)
+        for t in self.tokens:
+            print(t)
         return self.tokens
 
 
@@ -113,10 +114,10 @@ if __name__ == "__main__":
     #         y := x + 5;
     #     END;
     # '''
-    lexer = Lexer(path)
+    with open(path, "r") as f:
+        code = f.read()
+    lexer = Lexer(code)
     tokens = lexer.tokenize()
     with open('./token2.txt', 'w') as file:
         for token in tokens:
-            file.write('\'{a}\', \'{b}\'\n'.format(a=token.type, b=token.value))
-    # for token in tokens:
-    # print(token)
+            file.write('\'{a}\', \'{b}\', {c}, {d}\n'.format(a=token.type, b=token.value, c=token.line, d=token.column))

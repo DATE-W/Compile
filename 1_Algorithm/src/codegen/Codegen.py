@@ -178,8 +178,10 @@ class Codegen:
 if __name__ == '__main__':
     grammar = Grammar(open('../parser/grammars/grammar.pl0').read())
     path = '../in/test.pl0'
+    with open(path, "r") as f:
+        code = f.read()
     codegen = Codegen((LR1Table(grammar).
-                       get_reduce_result(Lexer(path).tokenize())))
+                       get_reduce_result(Lexer(code).tokenize())))
     try:
         codegen.process()
         print('\nCode: ')
