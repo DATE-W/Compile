@@ -76,7 +76,9 @@ class Lexer:
             # self.tokens.append(token)
             value = match.group(token_type)
             if token_type == 'END':
-                print('1\n')
+                # print('Generate token finished')
+                pass
+
             if token_type not in ['id', 'num']:
                 token_type = value
                 value = ''
@@ -100,8 +102,8 @@ class Lexer:
                 # 处理无法匹配的字符
                 raise RuntimeError(
                     f'Unexpected character {self.code[pos]} at line {self.current_line} column {self.current_column}')
-        for t in self.tokens:
-            print(t)
+        # for t in self.tokens:
+        #     print(t)
         return self.tokens
 
 

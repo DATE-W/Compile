@@ -34,7 +34,7 @@ class Ui_MainWindow(FramelessMainWindow):
         self.setTitleBar(MyTitleBar(self))
         # self.setWindowIcon(QIcon('pic/vscode.png'))
         self.menuBar = QMenuBar(self.titleBar)
-        self.pictureBox = ImageView('pic/edocsv.png')
+        self.pictureBox = ImageView('gui/pic/edocsv.png')
         self.pictureBox.setFixedWidth(35)
         # menu = QMenu('打开', self)
         # menu.addAction('新建')
@@ -97,12 +97,12 @@ class Ui_MainWindow(FramelessMainWindow):
             return
         table, output = code_runner(content)
         if table is None:
+            print(output)
             QMessageBox.warning(self, "Error", str(output))
 
         # 找到主窗口中的 MyDockWidget 实例
         # dock_widget = self.findChild(MyDockWidget, 'dock')  # 'dock' 是您在创建时设置的对象名称
         # print(table)
-        print(output)
 
         # 如果找到了 MyDockWidget 实例
         if self.dock and table is not None:
@@ -138,7 +138,7 @@ class Ui_MainWindow(FramelessMainWindow):
     def open_file(self):
         fileName, fileType = QFileDialog.getOpenFileName(self, "选取文件", os.getcwd(),
                                                                    "All Files(*);;Text Files(*.txt)")
-        print(fileName + "x")
+        print("Receive filename: ", fileName)
         if fileName == "" or fileName is None:
             # 没有选择文件，那么就跳过，避免意外打开空路径
             pass
@@ -146,5 +146,5 @@ class Ui_MainWindow(FramelessMainWindow):
             with open(fileName, "r") as f:
                 res = f.read()
                 self.codeEditor.code_editor.setPlainText(res)
-            print(fileName)
+            print("Open file: ", fileName)
 
