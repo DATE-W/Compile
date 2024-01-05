@@ -42,7 +42,7 @@ class Codegen:
         return res
 
     def add_var(self, name: str):
-        if name in self.var_dict:
+        if name in self.var_dict or name in self.const_dict:
             raise RuntimeError(f'Redefinition in var {name}')
         self.var_dict[name] = ''
 

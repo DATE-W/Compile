@@ -65,7 +65,7 @@ class Lexer:
             self.current_line += 1
             self.current_column = 0
         elif token_type == 'ERROR':
-            raise RuntimeError("the code has got syntax error")
+            raise RuntimeError(f"Unexpected character {self.code[match.end()]} at line {self.current_line} column {self.current_column}")
         elif token_type != 'SKIP':
             # 生成并添加 token
             # value = match.group(token_type)
