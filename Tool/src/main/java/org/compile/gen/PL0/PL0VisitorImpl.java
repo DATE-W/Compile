@@ -82,7 +82,7 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
      * @param name 变量名称
      */
     private void addVar(String name) {
-        if (varDict.containsKey(name)) {
+        if (varDict.containsKey(name) || constDict.containsKey(name)) {
             throw new RuntimeException("变量重定义：" + name);
         }
         varDict.put(name, "");
@@ -110,7 +110,7 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
      * @param value 常量的值
      */
     private void addConst(String name, String value) throws RuntimeException {
-        if (constDict.containsKey(name)) {
+        if (constDict.containsKey(name) || varDict.containsKey(name)) {
             throw new RuntimeException("常量重定义：" + name);
         }
         constDict.put(name, value);
@@ -179,8 +179,10 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
 
     @Override
     public String visitAssignmentStatement(PL0Parser.AssignmentStatementContext ctx) {
+
         String id = visit(ctx.identifier());
         String expr = visit(ctx.expression());
+        updateVar(id,expr);
         emit(":=", expr, "-", id);
         return null;
     }
