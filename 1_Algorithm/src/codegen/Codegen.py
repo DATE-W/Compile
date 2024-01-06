@@ -24,6 +24,17 @@ class Codegen:
         def write_back(self, result):
             self.result = result
 
+    class SymbolTableItem:
+        def __init__(self, name, type, value, defined, addr):
+            self.name = name
+            self.type = type
+            self.value = value
+            self.defined = defined
+            self.addr = addr
+
+        def __str__(self):
+            return f'{self.name}\t{self.type}\t{self.value}\t{self.defined}\t{self.addr}'
+
     def __init__(self, reduce_list):
         self.reduce_list = reduce_list
         self.code: dict[int: Codegen.Code] = {}  # 用dict便于回填
@@ -34,6 +45,7 @@ class Codegen:
         self.const_dict = {}
         self.while_stack = []  # 记录循环开始的行和需要回填的行
         self.if_stack = []  # 记录需要回填的行
+        self.symbol_table = {}
 
     def __str__(self):
         res = ''
@@ -58,6 +70,21 @@ class Codegen:
         if name in self.const_dict:
             raise RuntimeError(f'Redefinition in const {name}')
         self.const_dict[name] = value
+
+    def get_value(self, name: str):
+        if name in self.const_dict:
+            return self.const_dict[name]
+        else:
+            if name in self.var_dict:
+                return self.var_dict[name]
+            else:
+                raise RuntimeError(f'Undefined var {name}')
+
+    def print_dict(self):
+        print("const:")
+        print(self.const_dict)
+        print("var:")
+        print(self.var_dict)
 
     def new_temp(self):
         temp_var = f"t{self.temp_counter}"
@@ -173,6 +200,7 @@ class Codegen:
             # print(f'while_stack: {self.while_stack}')
             # print(f'if_stack: {self.if_stack}')
             # print(f'line: {self.line_counter}')
+        self.print_dict()
 
 
 if __name__ == '__main__':
