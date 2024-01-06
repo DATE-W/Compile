@@ -116,6 +116,16 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
         constDict.put(name, value);
     }
 
+    public void printSymbolTable() {
+        System.out.println("符号表:");
+        for (String key : constDict.keySet()) {
+            System.out.println("SymbolTable: { name: " + key + ", type: const, value: " + constDict.get(key) + "}");
+        }
+        for (String key : varDict.keySet()) {
+            System.out.println("SymbolTable: { name: " + key + ", type: var}");
+        }
+    }
+
     @Override
     public String visitProgram(PL0Parser.ProgramContext ctx) {
         // 访问子节点

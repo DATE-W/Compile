@@ -44,6 +44,10 @@ public class PL0Compile {
                 PL0VisitorImpl visitor = new PL0VisitorImpl();
                 visitor.visit(tree);
                 String codeString = visitor.getCodeString();
+
+                // 打印符号表
+                visitor.printSymbolTable();
+
                 JTextArea resultTextArea = new JTextArea(codeString); // 为结果创建文本区域
                 resultTextArea.setFont(new Font("Monospaced", Font.PLAIN, 16)); // 设置字体大小
                 JScrollPane resultScrollPane = new JScrollPane(resultTextArea); // 为结果创建滚动面板
