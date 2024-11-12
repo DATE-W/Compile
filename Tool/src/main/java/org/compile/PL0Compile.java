@@ -44,7 +44,7 @@ public class PL0Compile {
                 PL0VisitorImpl visitor = new PL0VisitorImpl();
                 visitor.visit(tree);
                 String codeString = visitor.getCodeString();
-
+                System.out.println(codeString);
                 // 打印符号表
                 visitor.printSymbolTable();
 

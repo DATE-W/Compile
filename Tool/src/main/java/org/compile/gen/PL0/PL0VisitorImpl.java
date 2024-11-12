@@ -71,11 +71,17 @@ public class PL0VisitorImpl extends PL0BaseVisitor<String> {
      */
     public String getCodeString() {
         StringBuilder sb = new StringBuilder();
-        for (Code c : code.values()) {
-            sb.append(c.toString()).append("\n");
-        }
+
+        // 使用 Stream 对 code 按 key 排序
+        code.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    sb.append(entry.getValue().toString()).append("\n");
+                });
+
         return sb.toString();
     }
+
 
     /**
      * 向变量字典中添加新变量。
